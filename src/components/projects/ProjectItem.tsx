@@ -17,7 +17,7 @@ const ProjectItem = ({ project }: { project: Project }) => {
       <h1 className="font-semibold text-lg">{project.project}</h1>
       <div className="flex gap-2">
         <ProjectFormButton />
-        <DeleteButton id={project.id} />
+        <DeleteButton />
       </div>
     </div>
   );
