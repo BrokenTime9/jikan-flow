@@ -36,7 +36,7 @@ export const useProjects = () => {
   }, [data, setProjects, setError]);
 
   const { mutate: createProject, isPending: isAdding } = useMutation({
-    mutationFn: async ({ name }: { name: string }): Promise<Project> => {
+    mutationFn: async ({ name }: { name: string }) => {
       const response = await axios.post(
         "/api/projects",
         { name },
