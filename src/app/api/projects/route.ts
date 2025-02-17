@@ -21,6 +21,8 @@ export async function GET(req: Request) {
 
     return NextResponse.json(projects);
   } catch (error) {
+    console.log(error);
+
     return NextResponse.json(
       { success: false, message: "An error occurred" },
       { status: 500 },
@@ -55,6 +57,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(project);
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { success: false, message: "An error occurred" },
       { status: 500 },
@@ -120,6 +123,7 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json(deletedProject);
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { success: false, message: "An error occurred" },
       { status: 500 },

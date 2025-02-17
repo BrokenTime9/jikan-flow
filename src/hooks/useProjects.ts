@@ -33,7 +33,7 @@ export const useProjects = () => {
       setProjects(data);
       setError(null);
     }
-  }, [data, setProjects]);
+  }, [data, setProjects, setError]);
 
   const { mutate: createProject, isPending: isAdding } = useMutation({
     mutationFn: async ({ name }: { name: string }): Promise<Project> => {

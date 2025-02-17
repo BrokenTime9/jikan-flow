@@ -23,6 +23,7 @@ export default function LoginPage() {
         router.push("/");
       }
     } catch (error) {
+      console.log(error);
       setRes({ success: false, message: "Something went wrong" });
     } finally {
       setLoading(false);
