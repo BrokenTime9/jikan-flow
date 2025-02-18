@@ -5,7 +5,7 @@ import { useTaskStore } from "@/store/taskStore";
 import { useState } from "react";
 import { X } from "lucide-react";
 
-const AddTaskForm = ({ onClose }: { onClose: () => void }) => {
+const AddTaskForm = () => {
   const [title, setTitle] = useState<string>("");
   const [desc, setDesc] = useState<string>("");
   const [type, setType] = useState<string>("");
@@ -18,6 +18,7 @@ const AddTaskForm = ({ onClose }: { onClose: () => void }) => {
 
   const handleClick = () => {
     if (numericPid && date) {
+      console.log(priority);
       createTask({ title, desc, type, dueDate: date, projectId: numericPid });
       setTaskForm();
     }
