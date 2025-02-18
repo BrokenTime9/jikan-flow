@@ -51,9 +51,7 @@ export const useProjects = () => {
     },
     onSuccess: async (data) => {
       await addProject(data.project);
-
       queryClient.invalidateQueries({ queryKey: ["projects"] });
-      setProjectForm();
     },
     onError: (error) => {
       setError(String(error));
@@ -76,7 +74,6 @@ export const useProjects = () => {
       if (selectedProject) {
         await delProject(selectedProject);
       }
-
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       setDeleteForm();
     },
@@ -100,9 +97,7 @@ export const useProjects = () => {
     },
     onSuccess: async (data) => {
       await upProject(data);
-
       queryClient.invalidateQueries({ queryKey: ["projects"] });
-      setProjectForm();
     },
     onError: (error) => {
       setError(String(error));

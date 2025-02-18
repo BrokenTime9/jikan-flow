@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -10,6 +10,22 @@ export default function LoginPage() {
   const [res, setRes] = useState<{ success?: boolean; message?: string }>({});
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const check = async () => {
+      const response = await axios.post(
+        "/api/auth/checklogin",
+        {},
+        { withCredentials: true },
+      );
+
+      if (response.status === 200) {
+        router.push("/");
+      }
+    };
+
+    check();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);

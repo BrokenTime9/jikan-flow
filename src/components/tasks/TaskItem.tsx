@@ -2,20 +2,48 @@
 
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskStore } from "@/store/taskStore";
-import { Pencil, Plus, SquareX, Trash2 } from "lucide-react";
+import { Plus, SquareX } from "lucide-react";
+import TaskDeleteButton from "./TaskDeleteButton";
+import TaskEditButton from "./TaskEditButton";
+import { useState } from "react";
 
 const TaskItem = () => {
-  const { tasks, project, setProject, setTaskForm } = useTaskStore();
-  const { isLoading } = useTasks();
+  const { tasks, project, setProject, setTask, task, setTaskForm } =
+    useTaskStore();
+  const { isLoading, updateTask } = useTasks();
+  const [progressValues, setProgressValues] = useState<{
+    [key: string]: number;
+  }>({});
+  const [editingTask, setEditingTask] = useState<boolean>(false);
 
   const handleAdd = () => {
+    setTask(null);
     setTaskForm();
   };
+
   const handleClose = () => {
     setProject(null);
   };
-  const handleEdit = () => {};
-  const handleDel = () => {};
+
+  const handleProgressChange = (taskId: number, value: number) => {
+    setProgressValues((prev) => ({
+      ...prev,
+      [taskId]: value,
+    }));
+  };
+
+  const handleSetProgress = (taskId: number) => {
+    if (progressValues[taskId] !== undefined) {
+      updateTask({
+        id: task?.id,
+        title: task?.title,
+        desc: task?.desc,
+        dueDate: task?.dueDate,
+        progress: progressValues[taskId],
+      });
+      setEditingTask(false);
+    }
+  };
 
   return (
     <div className="w-full h-[60dvh] overflow-hidden bg-gray-800 p-4 border border-gray-700">
@@ -25,18 +53,6 @@ const TaskItem = () => {
           Project: {project?.project}
         </h1>
         <div className="flex gap-2">
-          <button
-            className="p-2 rounded bg-gray-700 hover:bg-white hover:text-black transition"
-            onClick={handleDel}
-          >
-            <Trash2 size={18} />
-          </button>
-          <button
-            className="p-2 rounded bg-gray-700 hover:bg-white hover:text-black transition"
-            onClick={handleEdit}
-          >
-            <Pencil size={18} />
-          </button>
           <button
             onClick={handleAdd}
             className="p-2 rounded bg-gray-700 hover:bg-white hover:text-black transition"
@@ -57,19 +73,57 @@ const TaskItem = () => {
         {isLoading ? (
           <p className="text-center text-white">Loading tasks...</p>
         ) : tasks.length > 0 ? (
-          tasks.map((task, i) => (
-            <div
-              key={i}
-              className="border border-gray-600 rounded-md p-2 bg-gray-800 hover:bg-gray-600 transition"
-            >
-              <h2 className="text-lg font-semibold">{task.title}</h2>
-              <p className="text-sm text-gray-300">{task.desc}</p>
-              <div className="flex justify-between text-gray-400 text-sm mt-2">
-                <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
-                <span>Progress: {task.progress}</span>
+          tasks
+            .filter((t) => t.progress !== 100)
+            .map((t) => (
+              <div
+                key={t.id}
+                className="border border-gray-600 rounded-md p-2 bg-gray-800 hover:bg-gray-600 transition"
+                onClick={() => setTask(t)}
+              >
+                <div className="flex justify-between">
+                  <h2 className="text-lg font-semibold">{t.title}</h2>
+                  <div className="flex gap-2">
+                    <TaskEditButton />
+                    <TaskDeleteButton />
+                  </div>
+                </div>
+                <p className="text-sm text-gray-300">{t.desc}</p>
+                <div className="flex justify-between text-gray-400 text-sm mt-2">
+                  <span>Due: {new Date(t.dueDate).toLocaleDateString()}</span>
+                  <div className="flex items-center gap-2">
+                    {task?.id === t.id && editingTask ? (
+                      <>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={progressValues[t.id] ?? t.progress}
+                          onChange={(e) =>
+                            handleProgressChange(t.id, Number(e.target.value))
+                          }
+                        />
+
+                        <button
+                          onClick={() => handleSetProgress(t.id)}
+                          className="px-2 py-1 bg-blue-500 text-white rounded"
+                        >
+                          Set
+                        </button>
+                      </>
+                    ) : (
+                      ""
+                    )}
+
+                    <p
+                      onClick={() => setEditingTask((prevState) => !prevState)}
+                    >
+                      Progress: {progressValues[t.id] ?? t.progress}%
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))
+            ))
         ) : (
           <p className="text-center text-gray-500">No tasks available</p>
         )}
