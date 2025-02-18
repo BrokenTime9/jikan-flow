@@ -1,17 +1,23 @@
 "use client";
 
 import { useProjectStore } from "@/store/projectStore";
+import { Project } from "@/types/projectType";
 import { Pencil } from "lucide-react";
 
-const ProjectFormButton = () => {
-  const { setProjectForm } = useProjectStore();
+const ProjectFormButton = ({ project }: { project: Project }) => {
+  const { setProjectForm, setSelectedProject } = useProjectStore();
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedProject(project);
+    setProjectForm();
+  };
   return (
     <button
-      onClick={setProjectForm}
-      className="px-4 py-2 bg-gray-700 text-white rounded-lg shadow-md transition hover:bg-blue-600"
+      onClick={handleClick}
+      className=" p-2 bg-gray-700 text-white rounded-lg shadow-md transition hover:bg-white hover:text-black "
     >
-      <Pencil size={20} />
+      <Pencil size={16} />
     </button>
   );
 };

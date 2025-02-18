@@ -34,6 +34,7 @@ export const createProject = async ({
       .insert(projects)
       .values({ project: name, userId })
       .returning();
+
     return {
       success: true,
       message: "Project added succesfully",

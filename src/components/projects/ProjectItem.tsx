@@ -2,22 +2,25 @@
 
 import DeleteButton from "./DeleteButton";
 import { Project } from "@/types/projectType";
-import { useProjectStore } from "@/store/projectStore";
 import ProjectFormButton from "./ProjectFormButton";
+import { useTaskStore } from "@/store/taskStore";
 
-const ProjectItem = ({ project }: { project: Project }) => {
-  const { setSelectedProject } = useProjectStore();
+const ProjectItem = ({ p }: { p: Project }) => {
+  const { setProject, project } = useTaskStore();
+  const handleProjectClick = () => {
+    setProject(p);
+  };
 
   return (
     <div
-      key={project.id}
-      onClick={() => setSelectedProject(project)}
-      className="p-4 mr-2 bg-gray-800 text-white flex justify-between items-center rounded-md shadow-md cursor-pointer transition border border-gray-600 focus:outline-none hover:bg-gray-700"
+      key={p.id}
+      onClick={handleProjectClick}
+      className={`p-4 bg-gray-800 text-white flex justify-between items-center rounded-md shadow-md cursor-pointer transition border ${project?.id === p.id ? "border-b-4 border-b-white" : "border"} border-gray-600 focus:outline-none hover:bg-gray-700`}
     >
-      <h1 className="font-semibold text-lg">{project.project}</h1>
+      <h1 className=" text-md overflow-x-hidden">{p.project}</h1>
       <div className="flex gap-2">
-        <ProjectFormButton />
-        <DeleteButton />
+        <ProjectFormButton project={p} />
+        <DeleteButton project={p} />
       </div>
     </div>
   );

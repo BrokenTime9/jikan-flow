@@ -12,7 +12,7 @@ const DeleteForm = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
         {!isDeleting ? (
           <>
-            <h1 className="text-lg font-semibold text-gray-800 mb-4">
+            <h1 className="text-lg font-semibold text-gray-800 mb-4 break-words ">
               Are you sure you want to delete the project:{" "}
               <span className="text-red-500">{selectedProject?.project}</span>?
             </h1>

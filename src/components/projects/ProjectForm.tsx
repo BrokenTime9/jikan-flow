@@ -3,10 +3,11 @@
 import { useProjects } from "@/hooks/useProjects";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "@/store/projectStore";
+import { X } from "lucide-react"; // Close button icon
 
-const ProjectForm = () => {
+const ProjectForm = ({ onClose }: { onClose: () => void }) => {
   const { createProject, isAdding, updateProject, isUpdating } = useProjects();
-  const { error, setError, setProjectForm, selectedProject } =
+  const { error, setError, selectedProject, setProjectForm } =
     useProjectStore();
   const [name, setName] = useState("");
 
@@ -14,84 +15,65 @@ const ProjectForm = () => {
     setName(selectedProject?.project || "");
   }, [selectedProject]);
 
-  const addProject = () => {
+  const handleSave = () => {
     setError(null);
     if (name) {
-      createProject({ name: name });
+      if (selectedProject?.id) {
+        updateProject({ id: selectedProject.id, name });
+      } else {
+        createProject({ name });
+      }
+      setProjectForm();
     }
   };
-  const update = () => {
-    if (name && selectedProject?.id) {
-      setError(null);
-      updateProject({ id: selectedProject?.id, name: name });
-    }
-  };
-
-  if (selectedProject) {
-    return (
-      <div
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-        onClick={setProjectForm}
-      >
-        <div
-          className="bg-white p-4 rounded-lg shadow-lg w-64 flex flex-col items-center relative"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {!isUpdating ? (
-            <>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-gray-200 p-2 rounded w-full mb-2 text-black"
-                placeholder="Project name"
-              />
-              {error ? <p className="text-red-500">*{error}</p> : ""}
-              <button
-                onClick={update}
-                disabled={isUpdating}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-              >
-                {isUpdating ? "Editing..." : "Edit Project"}
-              </button>
-            </>
-          ) : (
-            <p className="text-black">Editing task...</p>
-          )}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       onClick={setProjectForm}
     >
+      {/* Form Container */}
       <div
-        className="bg-white p-4 rounded-lg shadow-lg w-64 flex flex-col items-center relative"
-        onClick={(e) => e.stopPropagation()}
+        className="relative bg-gray-900 p-6 rounded-lg shadow-lg w-[400px]"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       >
-        {!isAdding ? (
-          <>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="bg-gray-200 p-2 rounded w-full mb-2 text-black"
-              placeholder="Project name"
-            />
+        {/* Close Button */}
+        <button
+          className="absolute top-2 right-2 text-gray-400 hover:text-white"
+          onClick={setProjectForm}
+        >
+          <X size={20} />
+        </button>
 
-            {error ? <p className="text-red-500">*{error}</p> : ""}
-            <button
-              onClick={addProject}
-              disabled={isAdding}
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-            >
-              {isAdding ? "Adding..." : "Add Project"}
-            </button>
-          </>
-        ) : (
-          <p className="text-black">Adding task...</p>
-        )}
+        <h2 className="text-xl font-semibold text-white mb-4">
+          {selectedProject ? "Edit Project" : "Create Project"}
+        </h2>
+
+        {/* Form Input */}
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full p-2 border border-gray-500 rounded text-black"
+          placeholder="Project name"
+          required
+        />
+
+        {error && <p className="text-red-500 text-sm mt-2">*{error}</p>}
+
+        {/* Action Button */}
+        <button
+          onClick={handleSave}
+          disabled={isAdding || isUpdating}
+          className="w-full mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+        >
+          {isAdding || isUpdating
+            ? "Saving..."
+            : selectedProject
+              ? "Edit Project"
+              : "Add Project"}
+        </button>
       </div>
     </div>
   );

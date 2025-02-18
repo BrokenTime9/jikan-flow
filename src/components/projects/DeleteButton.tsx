@@ -1,17 +1,22 @@
 "use client";
 
 import { useProjectStore } from "@/store/projectStore";
-import { Trash } from "lucide-react";
+import { Project } from "@/types/projectType";
+import { Trash2 } from "lucide-react";
 
-const DeleteButton = () => {
-  const { setDeleteForm } = useProjectStore();
-
+const DeleteButton = ({ project }: { project: Project }) => {
+  const { setDeleteForm, setSelectedProject } = useProjectStore();
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedProject(project);
+    setDeleteForm();
+  };
   return (
     <button
-      onClick={setDeleteForm}
-      className="px-3 py-1 bg-gray-700 text-white rounded-lg shadow-md transition hover:bg-red-600"
+      onClick={handleClick}
+      className="p-2 bg-gray-700 text-white rounded-lg shadow-md transition hover:bg-white hover:text-black"
     >
-      <Trash size={20} />
+      <Trash2 size={16} />
     </button>
   );
 };

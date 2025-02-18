@@ -20,6 +20,7 @@ export default function LoginPage() {
       setRes(response.data);
 
       if (response.data.success) {
+        router.prefetch("/");
         router.push("/");
       }
     } catch (error) {
