@@ -12,7 +12,6 @@ export const useProjects = () => {
     upProject,
     delProject,
     setDeleteForm,
-    setProjectForm,
 
     setError,
   } = useProjectStore();

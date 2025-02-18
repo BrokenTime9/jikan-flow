@@ -25,7 +25,7 @@ export default function RegisterPage() {
     };
 
     check();
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

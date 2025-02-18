@@ -25,7 +25,7 @@ export default function LoginPage() {
     };
 
     check();
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
