@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useProjectStore } from "@/store/projectStore";
 import { X } from "lucide-react"; // Close button icon
 
-const ProjectForm = ({ onClose }: { onClose: () => void }) => {
+const ProjectForm = () => {
   const { createProject, isAdding, updateProject, isUpdating } = useProjects();
   const { error, setError, selectedProject, setProjectForm } =
     useProjectStore();
