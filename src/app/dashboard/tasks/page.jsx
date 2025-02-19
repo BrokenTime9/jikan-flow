@@ -5,6 +5,7 @@ import DeleteForm from "@/components/tasks/DeleteForm";
 import TaskDoneItem from "@/components/tasks/TaskDoneItem";
 import TaskHeader from "@/components/tasks/TaskHeader";
 import TaskItem from "@/components/tasks/TaskItem";
+import TaskStatistics from "@/components/tasks/TaskStatistics";
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskStore } from "@/store/taskStore";
 
@@ -23,7 +24,7 @@ const Tasks = () => {
           <TaskDoneItem />
         </div>
       ) : (
-        ""
+        <TaskStatistics />
       )}
     </>
   );

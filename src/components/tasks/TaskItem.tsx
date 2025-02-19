@@ -2,7 +2,7 @@
 
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskStore } from "@/store/taskStore";
-import { Plus, SquareX } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import TaskDeleteButton from "./TaskDeleteButton";
 import TaskEditButton from "./TaskEditButton";
 import { useState } from "react";
@@ -45,6 +45,25 @@ const TaskItem = () => {
     }
   };
 
+  const getPriorityColor = (priority: number | null) => {
+    if (priority) {
+      switch (priority) {
+        case 1:
+          return "text-red-500";
+        case 2:
+          return "text-yellow-500";
+        case 3:
+          return "text-green-500";
+        default:
+          return "text-gray-500";
+      }
+    }
+    return "text-gray-500";
+  };
+
+  // Ensure `tasks` is always an array
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+
   return (
     <div className="w-full h-[60dvh] overflow-hidden bg-gray-800 p-4 border border-gray-700">
       {/* Header Section */}
@@ -60,10 +79,10 @@ const TaskItem = () => {
             <Plus size={18} />
           </button>
           <button
-            className="p-2 rounded bg-gray-700 hover:bg-white hover:text-black transition"
+            className="p-2 rounded bg-gray-700 hover:bg-red-500 hover:text-white transition"
             onClick={handleClose}
           >
-            <SquareX size={18} />
+            <X size={18} />
           </button>
         </div>
       </div>
@@ -72,17 +91,22 @@ const TaskItem = () => {
       <div className="h-[50dvh] overflow-auto custom-scrollbar space-y-2 pr-2">
         {isLoading ? (
           <p className="text-center text-white">Loading tasks...</p>
-        ) : tasks.length > 0 ? (
-          tasks
+        ) : safeTasks.length > 0 ? (
+          safeTasks
             .filter((t) => t.progress !== 100)
             .map((t) => (
               <div
                 key={t.id}
-                className="border border-gray-600 rounded-md p-2 bg-gray-800 hover:bg-gray-600 transition"
+                className={`border border-gray-600 rounded-md p-2 hover:bg-gray-600 transition`}
                 onClick={() => setTask(t)}
               >
                 <div className="flex justify-between">
-                  <h2 className="text-lg font-semibold">{t.title}</h2>
+                  <h2 className="text-lg font-semibold">
+                    {t.title}{" "}
+                    <span className={`text-xl ${getPriorityColor(t.priority)}`}>
+                      ●
+                    </span>
+                  </h2>
                   <div className="flex gap-2">
                     <TaskEditButton />
                     <TaskDeleteButton />

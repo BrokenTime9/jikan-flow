@@ -15,6 +15,7 @@ export const createTask = async ({
   desc,
   type,
   dueDate,
+  priority,
   projectId,
   userId,
 }: NewTask): Promise<TaskResponse> => {
@@ -35,6 +36,7 @@ export const createTask = async ({
         desc,
         type,
         done: false,
+        priority,
         dueDate: new Date(dueDate),
         createdAt: new Date(),
         projectId,
@@ -49,18 +51,24 @@ export const createTask = async ({
   }
 };
 
-export const getTasks = async (
-  projectId: number,
-  userId: number,
-): Promise<TaskResponse> => {
+export const getTasks = async (projectId: number, userId: number) => {
   try {
     const allTasks = await db
       .select()
       .from(tasks)
       .where(and(eq(tasks.projectId, projectId), eq(tasks.userId, userId)))
       .orderBy(asc(tasks.id));
+    const userTasks = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.userId, userId))
+      .orderBy(asc(tasks.id));
 
-    return { success: true, message: "Fetched all tasks", task: allTasks };
+    return {
+      success: true,
+      message: "Fetched all tasks",
+      task: [allTasks, userTasks],
+    };
   } catch (error) {
     const e = error instanceof Error ? error.message : "Fetch Failed";
     return { success: false, message: e, task: null };
@@ -73,6 +81,7 @@ export const editTask = async ({
   title,
   desc,
   dueDate,
+  priority,
   progress,
 }: {
   id: number;
@@ -80,6 +89,7 @@ export const editTask = async ({
   title: string;
   desc: string;
   dueDate: Date;
+  priority: number;
   progress?: number;
 }): Promise<TaskResponse> => {
   try {
@@ -101,6 +111,7 @@ export const editTask = async ({
         desc,
         progress: updatedProgress,
         dueDate: new Date(dueDate),
+        priority,
         done,
       })
       .where(eq(tasks.id, id));

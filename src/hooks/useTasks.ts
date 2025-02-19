@@ -9,6 +9,7 @@ export const useTasks = () => {
   const {
     task,
     setTasks,
+    setUserTasks,
     addTask,
     upTask,
     project,
@@ -32,9 +33,10 @@ export const useTasks = () => {
 
   useEffect(() => {
     if (data) {
-      setTasks(data);
+      setTasks(data[0]);
+      setUserTasks(data[1]);
     }
-  }, [data, setTasks]);
+  }, [data, setTasks, setUserTasks]);
 
   // Create a new task
   const { mutate: createTask, isPending: isAdding } = useMutation({
@@ -56,10 +58,10 @@ export const useTasks = () => {
       });
       return response.data;
     },
-    onSuccess: (newTask) => {
-      addTask(newTask);
-      setTaskForm();
+    onSuccess: async (newTask) => {
+      await addTask(newTask);
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      setTaskForm();
     },
   });
 
@@ -69,12 +71,14 @@ export const useTasks = () => {
       id,
       title,
       desc,
+      priority,
       dueDate,
       progress,
     }: Partial<Task>) => {
       const response = await axios.put(
         `/api/projects/tasks`,
-        { id, title, desc, dueDate, progress },
+        { id, title, desc, priority, dueDate, progress },
+
         { withCredentials: true },
       );
       return response.data.task.task;
@@ -84,6 +88,7 @@ export const useTasks = () => {
       queryClient.invalidateQueries({
         queryKey: ["tasks"],
       });
+      setTaskForm();
     },
   });
 

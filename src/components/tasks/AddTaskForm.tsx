@@ -37,6 +37,7 @@ const AddTaskForm = () => {
           title,
           desc,
           dueDate: date,
+          priority,
           progress: task?.progress,
         });
       } else {
@@ -101,6 +102,7 @@ const AddTaskForm = () => {
               />
               <input
                 type="date"
+                value={date ? date.toISOString().split("T")[0] : ""}
                 onChange={(e) => setDate(new Date(e.target.value))}
                 className="w-full p-2 border border-gray-500 rounded text-black"
                 required

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, desc, type, dueDate, projectId } = body;
+    const { title, desc, type, dueDate, projectId, priority } = body;
 
     if (!title || !desc || !type || !dueDate || !projectId) {
       return NextResponse.json(
@@ -37,6 +37,7 @@ export async function POST(req: Request) {
       type,
       dueDate,
       projectId,
+      priority,
       userId: numericId,
     });
     return NextResponse.json(task);
@@ -111,9 +112,9 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { id, title, desc, dueDate, progress } = body;
+    const { id, title, desc, dueDate, progress, priority } = body;
 
-    if (!id || !title || !desc || !dueDate) {
+    if (!id || !title || !desc || !dueDate || !priority) {
       console.log(id);
       console.log(title);
       console.log(desc);
@@ -139,6 +140,7 @@ export async function PUT(req: Request) {
       id,
       title,
       userId: numericUserId,
+      priority,
       desc,
       dueDate,
       progress: numericProgress,
