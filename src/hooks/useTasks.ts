@@ -9,7 +9,6 @@ export const useTasks = () => {
   const {
     task,
     setTasks,
-    setUserTasks,
     addTask,
     upTask,
     project,
@@ -36,7 +35,7 @@ export const useTasks = () => {
     if (data) {
       setTasks(data);
     }
-  }, [data, setTasks, setUserTasks]);
+  }, [data, setTasks]);
   // Create a new task
   const { mutate: createTask, isPending: isAdding } = useMutation({
     mutationFn: async ({
