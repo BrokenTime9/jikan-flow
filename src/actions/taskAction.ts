@@ -58,23 +58,16 @@ export const getTasks = async (projectId: number, userId: number) => {
       .from(tasks)
       .where(and(eq(tasks.projectId, projectId), eq(tasks.userId, userId)))
       .orderBy(asc(tasks.id));
-    const userTasks = await db
-      .select()
-      .from(tasks)
-      .where(eq(tasks.userId, userId))
-      .orderBy(asc(tasks.id));
-
     return {
       success: true,
       message: "Fetched all tasks",
-      task: [allTasks, userTasks],
+      task: allTasks,
     };
   } catch (error) {
     const e = error instanceof Error ? error.message : "Fetch Failed";
     return { success: false, message: e, task: null };
   }
 };
-
 export const editTask = async ({
   id,
   userId,

@@ -6,14 +6,12 @@ interface TaskState {
   project: Project | null;
   task: Task | null;
   tasks: Task[];
-  userTasks: Task[];
   taskForm: boolean;
   deleteTaskForm: boolean;
 
   setProject: (project: Project | null) => void;
   setTask: (task: Task | null) => void;
   setTasks: (tasks: Task[]) => void;
-  setUserTasks: (tasks: Task[]) => void;
   setTaskForm: () => void;
   setDeleteTaskForm: () => void;
   addTask: (task: Task) => void;
@@ -25,14 +23,12 @@ export const useTaskStore = create<TaskState>((set) => ({
   project: null,
   task: null,
   tasks: [],
-  userTasks: [],
   taskForm: false,
   deleteTaskForm: false,
 
   setProject: (project) => set({ project }),
   setTask: (task) => set({ task }),
   setTasks: (tasks) => set({ tasks }),
-  setUserTasks: (tasks) => set({ userTasks: tasks }),
   setTaskForm: () => set((state) => ({ taskForm: !state.taskForm })),
   setDeleteTaskForm: () =>
     set((state) => ({ deleteTaskForm: !state.deleteTaskForm })),

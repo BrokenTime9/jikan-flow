@@ -40,6 +40,7 @@ const TaskItem = () => {
         desc: task?.desc,
         dueDate: task?.dueDate,
         progress: progressValues[taskId],
+        priority: task?.priority,
       });
       setEditingTask(false);
     }

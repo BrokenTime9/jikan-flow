@@ -26,6 +26,7 @@ export const useTasks = () => {
         params: { projectId: project?.id },
         withCredentials: true,
       });
+      console.log("task", response.data.tasks);
       return response.data.tasks.task;
     },
     staleTime: 1000 * 60 * 5,
@@ -33,11 +34,9 @@ export const useTasks = () => {
 
   useEffect(() => {
     if (data) {
-      setTasks(data[0]);
-      setUserTasks(data[1]);
+      setTasks(data);
     }
   }, [data, setTasks, setUserTasks]);
-
   // Create a new task
   const { mutate: createTask, isPending: isAdding } = useMutation({
     mutationFn: async ({
@@ -88,7 +87,6 @@ export const useTasks = () => {
       queryClient.invalidateQueries({
         queryKey: ["tasks"],
       });
-      setTaskForm();
     },
   });
 

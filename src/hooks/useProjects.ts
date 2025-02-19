@@ -73,8 +73,8 @@ export const useProjects = () => {
       if (selectedProject) {
         await delProject(selectedProject);
       }
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
       setDeleteForm();
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
     onError: (error) => {
       setError(String(error));
