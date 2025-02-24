@@ -2,6 +2,7 @@
 
 import Tasks from "./tasks/page";
 import Projects from "./projects/page";
+import ErrorPopUp from "@/components/popup/errorPopUp";
 
 const Dashboard = () => {
   return (
@@ -10,6 +11,7 @@ const Dashboard = () => {
         <Projects />
       </div>
       <Tasks />
+      <ErrorPopUp />
     </div>
   );
 };

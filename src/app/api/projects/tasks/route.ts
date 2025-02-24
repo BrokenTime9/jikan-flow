@@ -13,10 +13,7 @@ export async function POST(req: Request) {
 
     if (!userId) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "unauthorized",
-        },
+        { success: false, message: "Unauthorized" },
         { status: 401 },
       );
     }
@@ -40,16 +37,24 @@ export async function POST(req: Request) {
       priority,
       userId: numericId,
     });
-    return NextResponse.json(task);
+
+    return NextResponse.json({ success: true, task }, { status: 201 });
   } catch (error) {
-    console.error(error);
+    if (error instanceof Error) {
+      if (error.message.includes("Can't have two tasks with the same title")) {
+        return NextResponse.json(
+          { success: false, message: error.message },
+          { status: 400 },
+        );
+      }
+    }
+
     return NextResponse.json(
-      { success: false, message: "An error occurred" },
+      { success: false, message: "An unexpected error occurred" },
       { status: 500 },
     );
   }
 }
-
 export async function GET(req: Request) {
   try {
     const userId = req.headers.get("X-User-ID");

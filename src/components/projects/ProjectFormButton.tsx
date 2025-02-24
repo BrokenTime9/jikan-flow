@@ -15,7 +15,7 @@ const ProjectFormButton = ({ project }: { project: Project }) => {
   return (
     <button
       onClick={handleClick}
-      className=" p-2 bg-gray-700 text-white rounded-lg shadow-md transition hover:bg-white hover:text-black "
+      className=" p-2 bg-gray-700 text-white rounded shadow-md transition hover:bg-white hover:text-black "
     >
       <Pencil size={16} />
     </button>

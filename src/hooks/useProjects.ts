@@ -20,12 +20,24 @@ export const useProjects = () => {
   const { data, isLoading } = useQuery<Project[]>({
     queryKey: ["projects"],
     queryFn: async (): Promise<Project[]> => {
-      const response = await axios.get("/api/projects", {
-        withCredentials: true,
-      });
-      return response.data.project;
+      try {
+        const response = await axios.get("/api/projects", {
+          withCredentials: true,
+        });
+        return response.data.project;
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          if (err.response?.status === 401) {
+            window.location.href = "/login";
+          }
+          throw new Error(
+            err.response?.data?.message || "Failed to fetch projects",
+          );
+        }
+        throw new Error("An unknown error occurred");
+      }
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
   });
   useEffect(() => {
     if (data) {

@@ -1,13 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { NewMutationTask, Task } from "@/types/taskType";
+import { Task } from "@/types/taskType";
 import { useTaskStore } from "@/store/taskStore";
+import { usePopUpStore } from "@/store/popUpStore";
 import { useEffect } from "react";
 
 export const useTasks = () => {
   const queryClient = useQueryClient();
   const {
     task,
+    tasks,
     setTasks,
     addTask,
     upTask,
@@ -16,6 +18,7 @@ export const useTasks = () => {
     setDeleteTaskForm,
     setTaskForm,
   } = useTaskStore();
+  const { setError } = usePopUpStore();
 
   // Fetch tasks
   const { data, isLoading } = useQuery<Task[]>({
@@ -25,7 +28,6 @@ export const useTasks = () => {
         params: { projectId: project?.id },
         withCredentials: true,
       });
-      console.log("task", response.data.tasks);
       return response.data.tasks.task;
     },
     staleTime: 1000 * 60 * 5,
@@ -36,6 +38,7 @@ export const useTasks = () => {
       setTasks(data);
     }
   }, [data, setTasks]);
+
   // Create a new task
   const { mutate: createTask, isPending: isAdding } = useMutation({
     mutationFn: async ({
@@ -45,7 +48,7 @@ export const useTasks = () => {
       dueDate,
       priority,
       projectId,
-    }: NewMutationTask): Promise<Task> => {
+    }: Omit<Task, "userId">): Promise<Task> => {
       const response = await axios.post("/api/projects/tasks", {
         title,
         desc,
@@ -54,10 +57,26 @@ export const useTasks = () => {
         priority,
         projectId,
       });
-      return response.data;
+      if (!response.data.success) {
+        throw new Error(response.data.message || "Failed to create task");
+      }
+      return response.data.task;
     },
-    onSuccess: async (newTask) => {
-      await addTask(newTask);
+
+    onMutate: async (updatedTask) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks"] });
+      const previousTasks = tasks;
+      addTask(updatedTask);
+      setError(null);
+      return previousTasks;
+    },
+    onError: (error, newTask, context) => {
+      setError(error.response.data.message);
+      if (context) {
+        setTasks(context);
+      }
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       setTaskForm();
     },
@@ -106,7 +125,6 @@ export const useTasks = () => {
         await delTask(task);
       }
 
-      console.log("deleted");
       setDeleteTaskForm();
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },

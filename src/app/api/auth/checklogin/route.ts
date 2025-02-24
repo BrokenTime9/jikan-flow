@@ -4,12 +4,12 @@ export async function POST(req: Request) {
   const userId = req.headers.get("X-User-ID");
   if (userId) {
     return NextResponse.json(
-      { success: true, message: "Token found" },
+      { success: true, message: "Logout successful" },
       { status: 200 },
     );
   }
   return NextResponse.json(
-    { success: false, message: "No token found" },
-    { status: 400 },
+    { success: false, message: "Logout successful" },
+    { status: 200 },
   );
 }

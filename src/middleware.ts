@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
 
   if (!token) {
     return NextResponse.json(
-      { success: false, message: "Unauthorized" },
+      { success: false, message: "Unauthorized", redirectTo: "/login" },
       { status: 401 },
     );
   }

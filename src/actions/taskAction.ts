@@ -4,6 +4,13 @@ import { tasks } from "@/db/schema";
 import { NewTask, Task } from "@/types/taskType";
 import { eq, and, asc } from "drizzle-orm";
 
+class DuplicateTaskError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DuplicateTaskError";
+  }
+}
+
 interface TaskResponse {
   success: boolean;
   message: string;
@@ -18,7 +25,7 @@ export const createTask = async ({
   priority,
   projectId,
   userId,
-}: NewTask): Promise<TaskResponse> => {
+}: NewTask): Promise<Task> => {
   try {
     const existingTasks = await db
       .select()
@@ -26,7 +33,7 @@ export const createTask = async ({
       .where(eq(tasks.title, title));
 
     if (existingTasks.length > 0) {
-      throw new Error("Can't have two tasks with the same title");
+      throw new DuplicateTaskError("Can't have two tasks with the same title");
     }
 
     const [insertedTask] = await db
@@ -44,10 +51,10 @@ export const createTask = async ({
       })
       .returning();
 
-    return { success: true, message: "New Task Created", task: insertedTask };
+    return insertedTask;
   } catch (error) {
-    const e = error instanceof Error ? error.message : "Creation failed";
-    return { success: false, message: e, task: null };
+    console.error("Create Task Error:", error);
+    throw error;
   }
 };
 
