@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Task } from "@/types/taskType";
 import { useTaskStore } from "@/store/taskStore";
 import { usePopUpStore } from "@/store/popUpStore";
@@ -48,7 +48,7 @@ export const useTasks = () => {
       dueDate,
       priority,
       projectId,
-    }: Omit<Task, "userId">): Promise<Task> => {
+    }: Partial<Task>): Promise<Task> => {
       const response = await axios.post("/api/projects/tasks", {
         title,
         desc,
@@ -71,7 +71,8 @@ export const useTasks = () => {
       return previousTasks;
     },
     onError: (error, newTask, context) => {
-      setError(error.response.data.message);
+      const axiosError = error as AxiosError<{ message: string }>;
+      setError(axiosError?.response?.data?.message || "An error occurred");
       if (context) {
         setTasks(context);
       }

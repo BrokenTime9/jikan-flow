@@ -3,22 +3,22 @@ import { Task } from "@/types/taskType";
 import { Project } from "@/types/projectType";
 
 interface TaskState {
-  user: string | null; //userID
-  project: Project | null; //for all tasks of a project
-  task: Task | null; //for selected task - edit,delete
-  tasks: Task[]; // all tasks
-  taskForm: boolean; // add edit task form visibility
-  deleteTaskForm: boolean; // delete task form visibility
+  user: string | null; // User ID
+  project: Project | null; // Selected project
+  task: Partial<Task> | null; // Selected task (edit, delete)
+  tasks: Partial<Task>[]; // List of all tasks
+  taskForm: boolean; // Visibility of add/edit task form
+  deleteTaskForm: boolean; // Visibility of delete task form
 
-  setProject: (project: Project | null) => void; // sets selected project
-  fetchUser: () => Promise<void>; // sets userId
-  setTask: (task: Task | null) => void; // sets individual selected task
-  setTasks: (tasks: Task[]) => void; // sets all tasks
-  setTaskForm: () => void; //visibility
-  setDeleteTaskForm: () => void; //visibility
-  addTask: (task: Omit<Task, "userId">) => void; //add task - ui update
-  upTask: (project: Task) => void; //update task - ui update
-  delTask: (task: Task) => void; // delete task - ui update
+  setProject: (project: Project | null) => void; // Set selected project
+  fetchUser: () => Promise<void>; // Fetch user ID
+  setTask: (task: Partial<Task> | null) => void; // Set selected task
+  setTasks: (tasks: Partial<Task>[]) => void; // Set all tasks
+  setTaskForm: () => void; // Toggle task form visibility
+  setDeleteTaskForm: () => void; // Toggle delete form visibility
+  addTask: (task: Partial<Task>) => void; // Add a task (UI update)
+  upTask: (updatedTask: Partial<Task>) => void; // Update a task (UI update)
+  delTask: (task: Partial<Task>) => void; // Delete a task (UI update)
 }
 
 export const useTaskStore = create<TaskState>((set, get) => ({
@@ -36,32 +36,38 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       set({ user });
     }
   },
+
   setProject: (project) => set({ project }),
   setTask: (task) => set({ task }),
   setTasks: (tasks) => set({ tasks }),
   setTaskForm: () => set((state) => ({ taskForm: !state.taskForm })),
   setDeleteTaskForm: () =>
     set((state) => ({ deleteTaskForm: !state.deleteTaskForm })),
+
   addTask: (task) => {
     const user = get().user;
     const userId = Number(user);
     if (!userId) return;
 
-    const newTask: Task = { ...task, userId };
+    const newTask: Partial<Task> = { ...task, userId };
     set((state) => ({ tasks: [...state.tasks, newTask] }));
   },
+
   upTask: (updatedTask) =>
     set((state) => {
-      const updatedTasks = state.tasks.map((p) => p);
+      const updatedTasks = state.tasks.map((task) =>
+        task.id === updatedTask.id ? { ...task, ...updatedTask } : task,
+      );
 
       return {
-        tasks: [...updatedTasks],
+        tasks: updatedTasks,
         task: state.task?.id === updatedTask.id ? updatedTask : state.task,
       };
     }),
+
   delTask: (task) =>
     set((state) => ({
       tasks: state.tasks.filter((p) => p.id !== task.id),
-      selectedTask: state.task?.id === task.id ? null : state.task,
+      task: state.task?.id === task.id ? null : state.task,
     })),
 }));
