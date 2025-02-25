@@ -21,11 +21,11 @@ const AddTaskForm = () => {
   // Prefill form if editing
   useEffect(() => {
     if (task) {
-      setTitle(task.title);
-      setDesc(task.desc);
-      setType(task.type);
-      setDate(new Date(task.dueDate));
-      setPriority(task.priority || 2);
+      setTitle(task.title || "");
+      setDesc(task?.desc || "");
+      setType(task?.type || "");
+      setDate(task.dueDate ? new Date(task.dueDate) : null);
+      setPriority(task?.priority ?? 2);
     }
   }, [task]);
 
